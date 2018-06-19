@@ -38,9 +38,23 @@ namespace Grades
             grades.Add(grade);
         }
 
-        public string Name;
+        public string Name // ews kai th grammi 56 orizoume ena property wste na mhn ginetai na alaksei to name tou vivliou 
+        {
+            get
+            {
+                return _name;
+            }
 
-        private List<float> grades;
+            set
+            {
+                if (!String.IsNullOrEmpty(value))
+                {
+                    _name = value;
+                }
+            }
+        }
+        private string _name;
+        private List <float> grades;
         
     }
 }
