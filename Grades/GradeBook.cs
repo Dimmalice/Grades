@@ -1,25 +1,30 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Grades
 {
-    public class GradeBook //klasi
+    public class GradeBook : GradeTracker //klasi
     {
 
         public GradeBook() //CONSTRUCTOR. patisa ctor kai meta diplo TAB kai to kanei automata. To PUBLIC einai access modifier 
                            //an diladi svisw to PUBLIC tote to program.cs de tha borei na kanei retrieve kai na trexei tis adistoixes edoles pou einai public
                            //auto einai gia logous asfaleias
         {
-                grades = new List<float>();
+            _name = "Grade Book";
+            grades = new List<float>();
         }
 
-        public GradeStatistics ComputeStatistics() //constructor
+
+
+        public override GradeStatistics ComputeStatistics() //constructor
         {
-            GradeStatistics stats =  new GradeStatistics(); // constructor
-           
+            GradeStatistics stats = new GradeStatistics(); // constructor
+
 
             float sum = 0;
             foreach (float grade in grades) //gia kathe ena grade apo ta grades
@@ -31,30 +36,25 @@ namespace Grades
             stats.AverageGrade = sum / grades.Count;
             return stats;
         }
-        
 
-        public void AddGrade(float grade) //constructor. to void simainei pws h methodos den epistrefei kapio value enw sto proigoumeno constr. epistrefei to computestats
+        public override void WriteGrades(TextWriter destination)
+        {
+            for (int i = 0; i < grades.Count; i++)
+            {
+                destination.WriteLine(grades[i]);
+            }
+        }
+
+        public override void AddGrade(float grade) //constructor. to void simainei pws h methodos den epistrefei kapio value enw sto proigoumeno constr. epistrefei to computestats
         {
             grades.Add(grade);
         }
 
-        public string Name // ews kai th grammi 56 orizoume ena property wste na mhn ginetai na alaksei to name tou vivliou 
+        public override IEnumerator GetEnumerator()
         {
-            get
-            {
-                return _name;
-            }
-
-            set
-            {
-                if (!String.IsNullOrEmpty(value))
-                {
-                    _name = value;
-                }
-            }
+            return grades.GetEnumerator();
         }
-        private string _name;
-        private List <float> grades;
-        
+        protected List<float> grades;//me to protected mporoume na exoume prosvasi apo kwdika ths idias klasis 
+
     }
 }

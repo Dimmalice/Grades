@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 //using System.Speech.Synthesis; 
 using System.Text;
@@ -11,30 +12,85 @@ namespace Grades
     {
         static void Main(string[] args)
         {
-
-            //SpeechSynthesizer synth = new SpeechSynthesizer(); // to ekana add me deksi click sto references kai browse apo to Library. leei oti tou orisoume sthn grammi apo katw
-           // synth.Speak("hello hello");
+            IGradeTracker book = CreateGradeBook(); //me to new orizw ena neo kommati ths klasis GradeBook sthn periptwsh mas to book. H parenthesi simainei pws einai method//
 
 
 
-            GradeBook book = new GradeBook(); //me to new orizw ena neo kommati ths klasis GradeBook sthn periptwsh mas to book. H parenthesi simainei pws einai method//
-            book.Name = "Grade Book";
-            book.Name = null; // dokimi wste na doume pws me to property pou orisame den borei na alaksei to onoma se null
-            book.AddGrade(91);
-            book.AddGrade(89.5f); //to f einai gia na tu pw pws einai float auto pou tha tipwthei//
-            book.AddGrade(75);
+            //GetBookName(book);
 
-            GradeStatistics stats = book.ComputeStatistics();
-            Console.WriteLine(book.Name);
-            WriteResult("Average", stats.AverageGrade);
-            WriteResult("Highest",(int) stats.HighestGrade);
-            WriteResult("Lowest", stats.LowestGrade);
-           
+            AddGrades(book);
+
+            SaveGrades(book);
+
+           WriteResults(book);
+
         }
 
-        static void WriteResult(string description, int result) //edw leme vgale result oson afora ta int
+       
+        private static IGradeTracker CreateGradeBook()
         {
-            Console.WriteLine(description + ": " + result);
+
+          
+
+            return new ThrowAwayGradeBook();
+        }
+
+        private static void WriteResults(IGradeTracker book)
+        {
+            GradeStatistics stats = book.ComputeStatistics();
+
+            foreach (float grade in book)
+            {
+                Console.WriteLine(grade);
+            }
+
+            WriteResult("Average", stats.AverageGrade);
+            WriteResult("Highest", (int)stats.HighestGrade);
+            WriteResult("Lowest", stats.LowestGrade);
+            WriteResult(stats.Description, stats.LetterGrade);
+        }
+
+        private static void SaveGrades(IGradeTracker book)
+        {
+            using (StreamWriter outputFile = File.CreateText("grades.txt"))//to using einai gia close method
+            {
+                book.WriteGrades(outputFile);
+
+            }
+        }
+
+        private static void AddGrades(IGradeTracker book)
+        {
+            book.AddGrade(91);
+            book.AddGrade(89.5f);
+            book.AddGrade(75);
+        }
+
+        private static void GetBookName(IGradeTracker book)
+        {
+            try
+            {
+                Console.WriteLine("Enter a name...");
+                book.Name = Console.ReadLine();
+            }
+            catch (ArgumentException ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+
+
+        //static void WriteResult(string description, int result) //edw leme vgale result oson afora ta int
+        //{
+        //    Console.WriteLine(description + ": " + result);
+        //}
+
+
+
+        static void WriteResult(string description, string result)
+        {
+            Console.WriteLine($"{description}: {result}");
         }
 
         static void WriteResult (string description, float result) 
